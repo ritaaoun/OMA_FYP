@@ -13,12 +13,13 @@ public class Dataset {
 			
 			String line = "";
 			BufferedReader br = new BufferedReader(new FileReader(filename));
-			
 			PrintWriter writerPos = new PrintWriter("Resources\\positive tweets.txt", "UTF-8");
 			PrintWriter writerNeg = new PrintWriter("Resources\\negative tweets.txt", "UTF-8");
 			PrintWriter writerNeu = new PrintWriter("Resources\\neutral tweets.txt", "UTF-8");
+			PrintWriter writerAll = new PrintWriter("Resources\\all tweets.txt", "UTF-8");
 			
 			while ((line = br.readLine()) != null && line.length()!=0) {
+				String originalLine = line;
 				if(line.contains("NEG")){
 					line = line.replace("NEG", "");
 					writerNeg.println(line);
@@ -27,16 +28,20 @@ public class Dataset {
 					line = line.replace("POS", "");
 					writerPos.println(line);
 				}
-				else {
-					line = line.replace("OBJ", "");
+				else if(line.contains("NEUTRAL")){
 					line = line.replace("NEUTRAL", "");
 					writerNeu.println(line);
 				}
+				else {
+					continue;
+				}
+				writerAll.println(originalLine);
 			}
 			br.close();
 			writerPos.close();
 			writerNeg.close();
 			writerNeu.close();
+			writerAll.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
