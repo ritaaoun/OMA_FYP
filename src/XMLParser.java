@@ -15,7 +15,7 @@ public class XMLParser {
 	
 	   //takes a hashmap of processed tweets and places them in the 
 	   //input configuration file to be given to madamira
-	   public static void inputXML(Vector<HashMap<String,Object>> map, String fileName){
+	   public static void inputXML(Vector<HashMap<String,Object>> map, String fileName, boolean withHashtags){
 		   try {
 				DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance(); 
 				DocumentBuilder builder;
@@ -29,7 +29,7 @@ public class XMLParser {
 				}
 				
 				int nbOfTweets = map.size();
-				
+
 				// Adding new tweets
 				for (int i=0; i<nbOfTweets; i++) {
 					HashMap<String, Object> preprocessingMap = map.get(i);
@@ -46,20 +46,22 @@ public class XMLParser {
 					p.appendChild(a);
 					node.insertBefore(p, null);
 					
-					@SuppressWarnings("unchecked")
-					Vector<Vector<String>> hashtags = (Vector<Vector<String>>) (preprocessingMap.get("hashtags"));
-					
-					for (int j=0; j<hashtags.size(); ++j) {
-						Vector<String> hashtag = hashtags.elementAt(j);
-						String hashtagText = "";
-						for (String word : hashtag) {
-							hashtagText += word + " ";
+					if (withHashtags) {
+						@SuppressWarnings("unchecked")
+						Vector<Vector<String>> hashtags = (Vector<Vector<String>>) (preprocessingMap.get("hashtags"));
+						
+						for (int j=0; j<hashtags.size(); ++j) {
+							Vector<String> hashtag = hashtags.elementAt(j);
+							String hashtagText = "";
+							for (String word : hashtag) {
+								hashtagText += word + " ";
+							}
+							Text a2 = doc.createTextNode(hashtagText); 
+							Element p2 = doc.createElement("in_seg"); 
+							p2.setAttribute("id", "hashtag" + j);
+							p2.appendChild(a2);
+							node.insertBefore(p2, null);
 						}
-						Text a2 = doc.createTextNode(hashtagText); 
-						Element p2 = doc.createElement("in_seg"); 
-						p2.setAttribute("id", "hashtag" + j);
-						p2.appendChild(a2);
-						node.insertBefore(p2, null);
 					}
 				}
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -78,7 +80,7 @@ public class XMLParser {
 	   //parses the output file produced by madamira and extracts from it
 	   //the lemmas for every sentence
 	   @SuppressWarnings("unchecked")
-	public static HashMap<String, Object> outputXML(String filename, Vector<HashMap<String,Object>> preprocessed ){
+	public static HashMap<String, Object> outputXML(String filename, Vector<HashMap<String,Object>> preprocessed, boolean withHashtags ){
 		   Vector<Vector<String>> lemmas = new Vector<Vector<String>>();
 		   Vector<HashMap<String, Integer>> pos = new Vector<HashMap<String, Integer>>();
 		   Vector<Vector<Vector<String>>> hashtags = new Vector<Vector<Vector<String>>>();
@@ -144,47 +146,48 @@ public class XMLParser {
 			         lemmas.addElement(v);
 			         pos.addElement(pV);
 			         k++;
-			         
-			         for(int n = 0; n < ((Vector<String>)preprocessed.elementAt(m).get("hashtags")).size(); n++){
-			        	 Vector<String> h = new Vector<String>();
-			        	 NodeList hwords = ((Element)segments.item(k)).getElementsByTagName("word");
-			        	 String hlemma="";
-			        	 /****** start *****/
-			        	 
-			        	 for(int i = 0; i < hwords.getLength(); i++){
-				        	 Node hword = hwords.item(i);
-				        	 NodeList hfeatures = ((Element)hword).getElementsByTagName("morph_feature_set");
-			
-			        		 Element hmorph = (Element)hfeatures.item(1);
-			        		 String hcleaned = "";
-			        		 if (hmorph==null){//meaning that the word was not lemmatized
-				        		 hcleaned = ((Element)hword).getAttribute("word");
-				        		 
-				        	 }else{
-				        		 //get lemma
-					        	 hlemma = hmorph.getAttribute("lemma");
+			         if (withHashtags) {
+				         for(int n = 0; n < ((Vector<String>)preprocessed.elementAt(m).get("hashtags")).size(); n++){
+				        	 Vector<String> h = new Vector<String>();
+				        	 NodeList hwords = ((Element)segments.item(k)).getElementsByTagName("word");
+				        	 String hlemma="";
+				        	 /****** start *****/
+				        	 
+				        	 for(int i = 0; i < hwords.getLength(); i++){
+					        	 Node hword = hwords.item(i);
+					        	 NodeList hfeatures = ((Element)hword).getElementsByTagName("morph_feature_set");
+				
+				        		 Element hmorph = (Element)hfeatures.item(1);
+				        		 String hcleaned = "";
+				        		 if (hmorph==null){//meaning that the word was not lemmatized
+					        		 hcleaned = ((Element)hword).getAttribute("word");
+					        		 
+					        	 }else{
+					        		 //get lemma
+						        	 hlemma = hmorph.getAttribute("lemma");
+						        	 
+						        	 for(int j = 0; j < hlemma.length(); j++){
+						        		 char hc = hlemma.charAt(j);
+						        		 if(hc!='_'){
+						        			 hcleaned+=hlemma.charAt(j);	 
+						        		 }else{
+						        			 break;
+						        		 }
+						        	 }	 
+					        	 }
 					        	 
-					        	 for(int j = 0; j < hlemma.length(); j++){
-					        		 char hc = hlemma.charAt(j);
-					        		 if(hc!='_'){
-					        			 hcleaned+=hlemma.charAt(j);	 
-					        		 }else{
-					        			 break;
-					        		 }
-					        	 }	 
-				        	 }
+					        	 //lemmas vector
+					        	 h.add(hcleaned);
+					        	 
+					         }
 				        	 
-				        	 //lemmas vector
-				        	 h.add(hcleaned);
 				        	 
+				        	 /***** end ******/
+				        	 hV.add(h);
+				        	 k++;
 				         }
-			        	 
-			        	 
-			        	 /***** end ******/
-			        	 hV.add(h);
-			        	 k++;
+				         hashtags.add(hV); 
 			         }
-			        hashtags.add(hV); 
 		      }
 		          
 		  } catch (Exception e) {

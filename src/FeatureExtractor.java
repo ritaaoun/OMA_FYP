@@ -1,9 +1,72 @@
+import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Vector;
 
 
-public class FeatureExtractor {	
+public class FeatureExtractor {
+	@SuppressWarnings("unchecked")
+	public static void generateFeatureFile(String outputFilename, LinkedHashMap<String, Integer> data, boolean onlyNgrams) {
+		try {
+			Vector<HashMap<String, Object>> preprocessed = new Vector<HashMap<String, Object>>();
+			Vector<Integer> labels = new Vector<Integer>();
+			
+			int nbOfTweets = data.size();
+			
+			for (String tweet : data.keySet())
+			{
+				preprocessed.add(Preprocessor.preprocess(tweet));
+				labels.add(data.get(tweet));
+			}
+				
+			String input = "in.xml";
+			String output = "out.xml";
+				
+			XMLParser.inputXML(preprocessed,input,!onlyNgrams);
+			Madamira.lemmatize(input, output);
+			HashMap<String, Object> outputXML = XMLParser.outputXML(output, preprocessed,!onlyNgrams);
+				
+			Vector<Vector<String>> lemmatizedTweets = (Vector<Vector<String>>)(outputXML.get("lemmas"));
+			Vector<HashMap<String, Integer>> posTags = (Vector<HashMap<String, Integer>>)(outputXML.get("pos"));
+			Vector<Vector<Vector<String>>> hashtags = ((Vector<Vector<Vector<String>>>)(outputXML.get("hashtags")));
+				
+			Vector<Vector<Integer>> features = new Vector<Vector<Integer>>();
+			for(int i = 0; i < nbOfTweets; i++){
+				Vector<Integer> feature;
+				if (onlyNgrams) {
+					feature = FeatureExtractor.outputNgramFeatures(lemmatizedTweets.elementAt(i));
+				}
+				else {
+					feature = FeatureExtractor.outputFeatures(preprocessed.get(i), 
+						posTags.get(i), lemmatizedTweets.get(i), hashtags.get(i));
+				}
+				features.addElement(feature);
+			}
+				
+			PrintWriter writer = new PrintWriter(outputFilename, "UTF-8");
+			
+			int nbOfFeatures = features.elementAt(0).size();
+
+			for(int i=0; i<nbOfTweets; ++i){
+				Vector<Integer> tweetFeatures = features.elementAt(i);
+				int label = labels.elementAt(i);
+				writer.print(label + " ");
+				
+				for(int j=0; j<nbOfFeatures; ++j){
+					Integer f = tweetFeatures.elementAt(j);
+					if (f>0) {
+						writer.print((j+1)+":"+f+" ");
+					}
+				}
+				writer.println();
+			}
+			writer.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static Vector<Integer> outputFeatures(HashMap<String, Object> preprocessed, 
 		HashMap<String,Integer> posTags, Vector<String> lemmatizedTweet, Vector<Vector<String>> hashtags){
 		
@@ -36,8 +99,6 @@ public class FeatureExtractor {
 		}
 		features.add(posHashtags);
 		features.add(negHashtags);
-		
-		
 		
 		features.add((Integer)(preprocessed.get("!")));
 		features.add((Integer)(preprocessed.get("?")));
@@ -225,14 +286,21 @@ public class FeatureExtractor {
 		features.add(digitalnumbers);
 		features.add(latin);
 		
+		features.addAll(outputNgramFeatures(lemmatizedTweet));
+		
+		return features;
+	}
+	
+	public static Vector<Integer> outputNgramFeatures(Vector<String> lemmatizedTweet) {
+		Vector<Integer> features = new Vector<Integer>();
 		String tweet = "";
 		for (String word : lemmatizedTweet) {
 			tweet += word + " ";
 		}
-		List<String> ngrams = NGramExtractor.ngrams(3, tweet);
 		
-		for (String ngram : NGramExtractor.trigrams) {
-			if (ngrams.contains(ngram)) {
+		List<String> unigrams = NGramExtractor.ngrams(1, tweet);
+		for (String ngram : NGramExtractor.unigrams) {
+			if (unigrams.contains(ngram)) {
 				features.add(1);
 			}
 			else {
@@ -240,8 +308,25 @@ public class FeatureExtractor {
 			}
 		}
 		
+		List<String> bigrams = NGramExtractor.ngrams(2, tweet);
+		for (String ngram : NGramExtractor.bigrams) {
+			if (bigrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		
+		List<String> trigrams = NGramExtractor.ngrams(3, tweet);
+		for (String ngram : NGramExtractor.trigrams) {
+			if (trigrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
 		return features;
-		
-		
 	}
 }

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class NGramExtractor {
+	public static final HashSet<String> unigrams = getUnigrams();
+	public static final HashSet<String> bigrams = getBigrams();
 	public static final HashSet<String> trigrams = getTrigrams();
 	public static List<String> ngrams(int n, String str) {
         List<String> ngrams = new ArrayList<String>();
@@ -19,6 +21,36 @@ public class NGramExtractor {
         for (int i = start; i < end; i++)
             sb.append((i > start ? " " : "") + words[i]);
         return sb.toString();
+    }
+    public static HashSet<String> getUnigrams() {
+    	HashSet<String> unigrams = new HashSet<String>();
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader("Resources\\unigrams.txt"));
+			String line;
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				unigrams.add(line);
+			}
+			br.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return unigrams;
+    }
+    public static HashSet<String> getBigrams() {
+    	HashSet<String> bigrams = new HashSet<String>();
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader("Resources\\bigrams.txt"));
+			String line;
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				bigrams.add(line);
+			}
+			br.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return bigrams;
     }
     public static HashSet<String> getTrigrams() {
     	HashSet<String> trigrams = new HashSet<String>();
