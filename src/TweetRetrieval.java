@@ -5,11 +5,11 @@ public class TweetRetrieval {
 		LinkedHashMap<String, Integer> tweets = Dataset.getTrainTweets();
 		int threshold = 3;
 		boolean ngramOnly = false;
-		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\train_ngrams.txt", tweets, ngramOnly);
+		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\train.txt", tweets, ngramOnly);
 		tweets = Dataset.getDevTweets();
-		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\dev_ngrams.txt", tweets, ngramOnly);
+		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\dev.txt", tweets, ngramOnly);
 		tweets = Dataset.getTestTweets();
-		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\test_ngrams.txt", tweets, ngramOnly);
+		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\test.txt", tweets, ngramOnly);
 	}
 }
 //	@SuppressWarnings("unchecked")
