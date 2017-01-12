@@ -35,7 +35,11 @@ public class FeatureExtractor {
 			for(int i = 0; i < nbOfTweets; i++){
 				Vector<Integer> feature;
 				if (onlyNgrams) {
-					feature = FeatureExtractor.outputNgramFeatures(lemmatizedTweets.elementAt(i));
+					String tweet = "";
+					for (String word : lemmatizedTweets.elementAt(i)) {
+						tweet += word + " ";
+					}
+					feature = FeatureExtractor.outputNgramFeatures(tweet);
 				}
 				else {
 					feature = FeatureExtractor.outputFeatures(preprocessed.get(i), 
@@ -286,17 +290,18 @@ public class FeatureExtractor {
 		features.add(digitalnumbers);
 		features.add(latin);
 		
-		features.addAll(outputNgramFeatures(lemmatizedTweet));
-		
-		return features;
-	}
-	
-	public static Vector<Integer> outputNgramFeatures(Vector<String> lemmatizedTweet) {
-		Vector<Integer> features = new Vector<Integer>();
 		String tweet = "";
 		for (String word : lemmatizedTweet) {
 			tweet += word + " ";
 		}
+		
+		features.addAll(outputNgramFeatures(tweet));
+		
+		return features;
+	}
+	
+	public static Vector<Integer> outputNgramFeatures(String tweet) {
+		Vector<Integer> features = new Vector<Integer>();
 		
 		List<String> unigrams = NGramExtractor.ngrams(1, tweet);
 		for (String ngram : NGramExtractor.unigrams) {
