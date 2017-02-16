@@ -9,7 +9,7 @@ import java.util.Vector;
 public class Baseline {
 	
 	public static void main(String[] args) {
-		int threshold = 3;
+		int threshold = 5;
 		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\train_ngramsOnly.txt", Dataset.getTrainTweets(), threshold);
 		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\dev_ngramsOnly.txt", Dataset.getDevTweets(), threshold);
 		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\test_ngramsOnly.txt", Dataset.getTestTweets(), threshold);

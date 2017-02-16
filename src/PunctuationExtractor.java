@@ -3,23 +3,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PunctuationExtractor {
-
-	public static HashMap<Character,Integer> getPunctuation(String tweet) {
-		HashMap<Character,Integer> punc = new HashMap<Character,Integer>();
-		punc.put('?', 0);
-		punc.put('!', 0);
-		
-		Pattern pattern = Pattern.compile("[^\u0621-\u064A\u0660-\u0669 0-9a-zA-Z]");
+	public static void main(String[] args) {
+		System.out.println(getPunctuation("hiii!! I just met you, and th؟!is is crayyy; ?!!??"));
+	}
+	public static HashMap<String,Integer> getPunctuation(String tweet) {
+		HashMap<String,Integer> punc = new HashMap<String,Integer>();
+		int nbOfInterrogation = 0;
+		Pattern pattern = Pattern.compile("[?؟]");
 		Matcher matcher = pattern.matcher(tweet);
 		while(matcher.find()) {
-		   String s = matcher.group();
-		   if (s.equals("!")) {
-			   punc.put('!', punc.get('!')+1);
-		   }
-		   else if (s.equals("?") || s.equals("؟")) {
-			   punc.put('?', punc.get('?')+1);
-		   }
+		   ++nbOfInterrogation;
 		}
+		int nbOfExclamation = 0;
+		pattern = Pattern.compile("[!]");
+		matcher = pattern.matcher(tweet);
+		while(matcher.find()) {
+		   ++nbOfExclamation;
+		}
+		int nbOfBoth = 0;
+		pattern = Pattern.compile("(\\?!)|(!\\?)|(؟!)|(!؟)");
+		matcher = pattern.matcher(tweet);
+		while(matcher.find()) {
+		   ++nbOfBoth;
+		}
+		punc.put("?", nbOfInterrogation);
+		punc.put("!", nbOfExclamation);
+		punc.put("?!", nbOfBoth);
 		return punc;
 	}
 	

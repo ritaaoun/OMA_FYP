@@ -33,19 +33,19 @@ public class FeatureExtractor {
 				
 			Vector<Vector<Integer>> features = new Vector<Vector<Integer>>();
 			for(int i = 0; i < nbOfTweets; i++){
-				Vector<Integer> feature;
 				if (onlyNgrams) {
 					String tweet = "";
 					for (String word : lemmatizedTweets.elementAt(i)) {
 						tweet += word + " ";
 					}
-					feature = FeatureExtractor.outputNgramFeatures(tweet);
+					Vector<Integer> wordAndCharNgrams = FeatureExtractor.outputNgramFeatures(tweet);
+					wordAndCharNgrams.addAll(FeatureExtractor.outputCharNgramFeatures(tweet));
+					features.addElement(wordAndCharNgrams);
 				}
 				else {
-					feature = FeatureExtractor.outputFeatures(preprocessed.get(i), 
-						posTags.get(i), lemmatizedTweets.get(i), hashtags.get(i));
+					features.addElement(FeatureExtractor.outputFeatures(preprocessed.get(i), 
+						posTags.get(i), lemmatizedTweets.get(i), hashtags.get(i)));
 				}
-				features.addElement(feature);
 			}
 				
 			PrintWriter writer = new PrintWriter(outputFilename, "UTF-8");
@@ -104,8 +104,10 @@ public class FeatureExtractor {
 		features.add(posHashtags);
 		features.add(negHashtags);
 		
+		// number of !, ?, ?!, elongated
 		features.add((Integer)(preprocessed.get("!")));
 		features.add((Integer)(preprocessed.get("?")));
+		features.add((Integer)(preprocessed.get("?!")));
 		features.add((Integer)(preprocessed.get("elongated")));
 		
 		//number of negated contexts
@@ -118,12 +120,14 @@ public class FeatureExtractor {
 			}
 		}
 		features.add(switches);
+		
+		//number of positive and negative emoticons
 		@SuppressWarnings("unchecked")
 		Vector<Integer> emoPolarity = PolarityInfo.getEmoticonsInfo((Vector<String>)(preprocessed.get("emoticons")), ((Vector<String>)preprocessed.get("emojis")));
 		features.add(emoPolarity.elementAt(0));
 		features.add(emoPolarity.elementAt(1));
 		
-		//number of positive and negative emoticons
+		//presence of emoticons
 		@SuppressWarnings("unchecked")
 		int emoCount = ((Vector<String>)(preprocessed.get("emoticons"))).size()+((Vector<String>)(preprocessed.get("emojis"))).size();
 		if(emoCount == 0){
@@ -296,6 +300,7 @@ public class FeatureExtractor {
 		}
 		
 		features.addAll(outputNgramFeatures(tweet));
+		features.addAll(outputCharNgramFeatures(tweet));
 		
 		return features;
 	}
@@ -332,6 +337,52 @@ public class FeatureExtractor {
 				features.add(0);
 			}
 		}
+		
+		List<String> fourgrams = NGramExtractor.ngrams(4, tweet);
+		for (String ngram : NGramExtractor.fourgrams) {
+			if (fourgrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		return features;
+	}
+	
+	public static Vector<Integer> outputCharNgramFeatures(String tweet) {
+		Vector<Integer> features = new Vector<Integer>();
+		
+		List<String> trigrams = NGramExtractor.charNgrams(3, tweet);
+		for (String ngram : NGramExtractor.charTrigrams) {
+			if (trigrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		
+		List<String> fourgrams = NGramExtractor.charNgrams(4, tweet);
+		for (String ngram : NGramExtractor.charFourgrams) {
+			if (fourgrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		
+		List<String> fivegrams = NGramExtractor.charNgrams(5, tweet);
+		for (String ngram : NGramExtractor.charFivegrams) {
+			if (fivegrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		
 		return features;
 	}
 }

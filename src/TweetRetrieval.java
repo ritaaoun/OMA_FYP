@@ -3,7 +3,7 @@ import java.util.LinkedHashMap;
 public class TweetRetrieval {
 	public static void main(String[] args) {
 		LinkedHashMap<String, Integer> tweets = Dataset.getTrainTweets();
-		int threshold = 3;
+		int threshold = 5;
 		boolean ngramOnly = false;
 		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\train.txt", tweets, ngramOnly);
 		tweets = Dataset.getDevTweets();

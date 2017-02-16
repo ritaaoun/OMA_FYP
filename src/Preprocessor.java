@@ -17,7 +17,7 @@ public class Preprocessor {
 		Vector<String> emoticons = EmoticonExtractor.getEmoticons(tweet);
 		tweet = EmoticonExtractor.normalizeAllEmoticons(tweet);
 
-		HashMap<Character,Integer> punctuation = PunctuationExtractor.getPunctuation(tweet);
+		HashMap<String,Integer> punctuation = PunctuationExtractor.getPunctuation(tweet);
 		
 		boolean hasURLs = Normalizer.hasURL(tweet);
 		
@@ -110,8 +110,9 @@ public class Preprocessor {
 		preprocessed.put("urls", hasURLs);
 		preprocessed.put("mentions", hasMentions);
 		preprocessed.put("emoticons", emoticons);
-		preprocessed.put("?", punctuation.get('?'));
-		preprocessed.put("!", punctuation.get('!'));
+		preprocessed.put("?", punctuation.get("?"));
+		preprocessed.put("!", punctuation.get("!"));
+		preprocessed.put("?!", punctuation.get("?!"));
 		preprocessed.put("elongated", numberOfElongatedWords);
 		return preprocessed;
 	}
