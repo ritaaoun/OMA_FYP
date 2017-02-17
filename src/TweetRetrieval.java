@@ -2,6 +2,7 @@ import java.util.LinkedHashMap;
 
 public class TweetRetrieval {
 	public static void main(String[] args) {
+		// NOTE: When changing the treshold, make sure to change files in resources as well!!!
 		LinkedHashMap<String, Integer> tweets = Dataset.getTrainTweets();
 		int threshold = 5;
 		boolean ngramOnly = false;

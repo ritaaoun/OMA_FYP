@@ -9,13 +9,14 @@ import java.util.Vector;
 public class Baseline {
 	
 	public static void main(String[] args) {
+		// When changing the threshold, make sure to change the files in resources as well!!
 		int threshold = 5;
-		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\train_ngramsOnly.txt", Dataset.getTrainTweets(), threshold);
-		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\dev_ngramsOnly.txt", Dataset.getDevTweets(), threshold);
-		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\test_ngramsOnly.txt", Dataset.getTestTweets(), threshold);
+		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\train_ngramsOnly.txt", Dataset.getTrainTweets());
+		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\dev_ngramsOnly.txt", Dataset.getDevTweets());
+		generateBaselineFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\test_ngramsOnly.txt", Dataset.getTestTweets());
 	}
 
-	public static void generateBaselineFeatureFile(String outputFilename, LinkedHashMap<String, Integer> data, int threshold) {
+	public static void generateBaselineFeatureFile(String outputFilename, LinkedHashMap<String, Integer> data) {
 		try {
 			Vector<Integer> labels = new Vector<Integer>();
 			int nbOfTweets = data.size();
@@ -26,7 +27,7 @@ public class Baseline {
 		
 			Vector<Vector<Integer>> features = new Vector<Vector<Integer>>();
 			for(String tweet : data.keySet()){
-				Vector<Integer> feature = Baseline.outputNgramFeatures(tweet,threshold);
+				Vector<Integer> feature = Baseline.outputNgramFeatures(tweet);
 				features.addElement(feature);
 			}
 				
@@ -54,7 +55,7 @@ public class Baseline {
 		}
 	}
 
-	public static Vector<Integer> outputNgramFeatures(String tweet, int threshold) {
+	public static Vector<Integer> outputNgramFeatures(String tweet) {
 		Vector<Integer> features = new Vector<Integer>();
 		
 		List<String> unigrams = NGramExtractor.ngrams(1, tweet);
@@ -86,6 +87,16 @@ public class Baseline {
 				features.add(0);
 			}
 		}
+		
+		List<String> fourgrams = NGramExtractor.ngrams(4, tweet);
+		for (String ngram : Baseline.getFourgrams()) {
+			if (fourgrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
 		return features;
 	}
 	
@@ -104,6 +115,7 @@ public class Baseline {
     	}
     	return unigrams;
     }
+    
     public static HashSet<String> getBigrams() {
     	HashSet<String> bigrams = new HashSet<String>();
     	try {
@@ -133,5 +145,20 @@ public class Baseline {
     		e.printStackTrace();
     	}
     	return trigrams;
+    }
+    public static HashSet<String> getFourgrams() {
+    	HashSet<String> four = new HashSet<String>();
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader("resources\\fourgrams_not_lemmatized.txt"));
+			String line;
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				four.add(line);
+			}
+			br.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return four;
     }
 }
