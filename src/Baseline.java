@@ -100,6 +100,42 @@ public class Baseline {
 		return features;
 	}
 	
+	public static Vector<Integer> outputCharNgramFeatures(String tweet) {
+		Vector<Integer> features = new Vector<Integer>();
+		
+		List<String> trigrams = NGramExtractor.charNgrams(3, tweet);
+		for (String ngram : Baseline.getCharTrigrams()) {
+			if (trigrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		
+		List<String> fourgrams = NGramExtractor.charNgrams(4, tweet);
+		for (String ngram : Baseline.getCharFourgrams()) {
+			if (fourgrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+		
+		List<String> fivegrams = NGramExtractor.charNgrams(5, tweet);
+		for (String ngram : Baseline.getCharFivegrams()) {
+			if (fivegrams.contains(ngram)) {
+				features.add(1);
+			}
+			else {
+				features.add(0);
+			}
+		}
+
+		return features;
+	}
+	
     public static HashSet<String> getUnigrams() {
     	HashSet<String> unigrams = new HashSet<String>();
     	try {
@@ -160,5 +196,50 @@ public class Baseline {
     		e.printStackTrace();
     	}
     	return four;
+    }
+    public static HashSet<String> getCharTrigrams() {
+    	HashSet<String> trigrams = new HashSet<String>();
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader("resources\\char_trigrams_not_lemmatized.txt"));
+			String line;
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				trigrams.add(line);
+			}
+			br.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return trigrams;
+    }
+    public static HashSet<String> getCharFourgrams() {
+    	HashSet<String> fourgrams = new HashSet<String>();
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader("resources\\char_fourgrams_not_lemmatized.txt"));
+			String line;
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				fourgrams.add(line);
+			}
+			br.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return fourgrams;
+    }
+    public static HashSet<String> getCharFivegrams() {
+    	HashSet<String> fivegrams = new HashSet<String>();
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader("resources\\char_fivegrams_not_lemmatized.txt"));
+			String line;
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				fivegrams.add(line);
+			}
+			br.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return fivegrams;
     }
 }

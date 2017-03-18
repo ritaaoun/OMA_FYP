@@ -17,7 +17,7 @@ public class EmojiExtractor extends EmojiParser {
 	public static String normalizeAllEmojis(String str) {
 	    EmojiTransformer emojiTransformer = new EmojiTransformer() {
 	      public String transform(UnicodeCandidate unicodeCandidate) {
-	        return " ÇíãæÊíßæäÊæßä ";
+	        return " Ø§ÙŠÙ…ÙˆØªÙŠÙƒÙˆÙ†ØªÙˆÙƒÙ† ";
 	      }
 	    };
 

@@ -77,8 +77,7 @@ public class Normalizer {
 	
 	public static String normalizeNumbers(String tweet) {
 	    String normalized = "";
-
-		Pattern pattern = Pattern.compile("[0-9\u0660-\u0669]+");
+		Pattern pattern = Pattern.compile("[0-9]+");
         Matcher matcher = pattern.matcher(tweet);
 		
 		int start = 0;
@@ -87,7 +86,44 @@ public class Normalizer {
             normalized = normalized + tweet.substring(start, end) + " " + matcher.group() + " ";
 			start = matcher.end()+1;
         }
-		normalized += tweet.substring(start);
+        if (start < tweet.length()) {
+        	normalized += tweet.substring(start);
+        }
+        
+        tweet = normalized;
+
+	    normalized = "";
+		pattern = Pattern.compile("[\u0660-\u0669]+");
+        matcher = pattern.matcher(tweet);
+		
+		start = 0;
+        while(matcher.find()) {
+			int end = matcher.start();
+            normalized = normalized + tweet.substring(start, end) + " " + matcher.group() + " ";
+			start = matcher.end()+1;
+        }
+        if (start < tweet.length()) {
+        	normalized += tweet.substring(start);
+        }
+        
+        return normalized;
+	}
+	
+	public static String normalizeLatinLetters(String tweet) {
+	    String normalized = "";
+
+		Pattern pattern = Pattern.compile("[a-zA-Z]+");
+        Matcher matcher = pattern.matcher(tweet);
+		
+		int start = 0;
+        while(matcher.find()) {
+			int end = matcher.start();
+            normalized = normalized + tweet.substring(start, end) + " " + matcher.group() + " ";
+			start = matcher.end()+1;
+        }
+        if (start < tweet.length()) {
+        	normalized += tweet.substring(start);
+        }
         return normalized;
 	}
 	

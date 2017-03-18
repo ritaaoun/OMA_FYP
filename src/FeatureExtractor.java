@@ -40,6 +40,8 @@ public class FeatureExtractor {
 					}
 					Vector<Integer> wordAndCharNgrams = FeatureExtractor.outputNgramFeatures(tweet);
 					wordAndCharNgrams.addAll(FeatureExtractor.outputCharNgramFeatures(tweet));
+//					Vector<Integer> wordAndCharNgrams = Baseline.outputNgramFeatures(tweet);
+//					wordAndCharNgrams.addAll(Baseline.outputCharNgramFeatures(tweet));
 					features.addElement(wordAndCharNgrams);
 				}
 				else {

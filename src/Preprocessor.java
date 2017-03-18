@@ -23,17 +23,16 @@ public class Preprocessor {
 		
 		if (hasURLs) {	
 			tweet = Normalizer.normalizeURLs(tweet);
-			hasURLs = true;
 		}
 		
 		boolean hasMentions = Normalizer.hasMention(tweet);
 		
 		if (hasMentions) {
 			tweet = Normalizer.normalizeMentions(tweet);
-			hasMentions = true;
 		}
-		
+
 		tweet = Normalizer.normalizeNumbers(tweet);
+		tweet = Normalizer.normalizeLatinLetters(tweet);
 		
 		int numberOfElongatedWords = 0;
 		

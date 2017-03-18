@@ -1,18 +1,44 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 
 public class TweetRetrieval {
 	public static void main(String[] args) {
 		// NOTE: When changing the treshold, make sure to change files in resources as well!!!
-		LinkedHashMap<String, Integer> tweets = Dataset.getTrainTweets();
-		int threshold = 5;
-		boolean ngramOnly = false;
-		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\train.txt", tweets, ngramOnly);
-		tweets = Dataset.getDevTweets();
-		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\dev.txt", tweets, ngramOnly);
-		tweets = Dataset.getTestTweets();
-		FeatureExtractor.generateFeatureFile("features\\lemmatized_ngrams_threshold_"+threshold+"\\test.txt", tweets, ngramOnly);
+//		LinkedHashMap<String, Integer> tweets = Dataset.getTrainTweets();
+//		int threshold = 5;
+//		boolean ngramOnly = false;
+//		FeatureExtractor.generateFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\train.txt", tweets, ngramOnly);
+//		tweets = Dataset.getDevTweets();
+//		FeatureExtractor.generateFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\dev.txt", tweets, ngramOnly);
+//		tweets = Dataset.getTestTweets();
+//		FeatureExtractor.generateFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\test.txt", tweets, ngramOnly);
+		
+		String country = "UAE";
+		String folder = "dataset tweets\\"+country+"\\";
+		LinkedHashMap<String, Integer> tweets = getTweetsFromFile(folder+country+".txt");
+		FeatureExtractor.generateFeatureFile(folder+country+"_features.txt", tweets, false);
+	}
+	
+	public static LinkedHashMap<String, Integer> getTweetsFromFile(String filename) {
+		LinkedHashMap<String, Integer> tweets = new LinkedHashMap<String, Integer>();
+		try {
+			String line = "";
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+	
+			while ((line = br.readLine()) != null && line.length()!=0) {
+				tweets.put(line, 0);
+			}
+			br.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return tweets;
 	}
 }
+
 //	@SuppressWarnings("unchecked")
 //	public static void main(String[] args) {
 //		TwitterManager twitterManager = new TwitterManager();  

@@ -25,6 +25,8 @@ public class PolarityInfo
 			 negated = isNegated.elementAt(i);
 			}
 			catch(Exception e) {
+				System.out.println("ISNEGATED!!");
+				e.printStackTrace();
 				negated=false;
 				for(String ss : lemmatizedTweet){
 					System.out.print(ss+" ");
@@ -55,6 +57,8 @@ public class PolarityInfo
 					word = normalizedTweet.elementAt(i);
 				}
 				catch(Exception e) {
+					System.out.println("NORMALIZEDTWEET!!");
+					e.printStackTrace();
 					word = "";
 					for(String ss : normalizedTweet){
 						System.out.print(ss+" ");

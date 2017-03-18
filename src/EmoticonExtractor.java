@@ -89,7 +89,7 @@ public class EmoticonExtractor {
 		int end = 0;
 
 		while(matcher.find()) {
-		    fixedTweet = fixedTweet + tweet.substring(end, matcher.start()) + " ÇíãæÊíßæäÊæßä ";
+		    fixedTweet = fixedTweet + tweet.substring(end, matcher.start()) + " Ø§ÙŠÙ…ÙˆØªÙŠÙƒÙˆÙ†ØªÙˆÙƒÙ† ";
 		    end = matcher.end();
 		}
 		fixedTweet = fixedTweet + tweet.substring(end);
