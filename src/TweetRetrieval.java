@@ -15,9 +15,9 @@ public class TweetRetrieval {
 //		tweets = Dataset.getTestTweets();
 //		FeatureExtractor.generateFeatureFile("features\\not_lemmatized_ngrams_threshold_"+threshold+"\\test.txt", tweets, ngramOnly);
 		
-		String country = "UAE";
-		String folder = "dataset tweets\\"+country+"\\";
-		LinkedHashMap<String, Integer> tweets = getTweetsFromFile(folder+country+".txt");
+		String country = "Egypt";
+		String folder = "dataset_tweets\\"+country+"\\";
+		LinkedHashMap<String, Integer> tweets = getTweetsFromFile(folder+"tweets_clean.txt");
 		FeatureExtractor.generateFeatureFile(folder+country+"_features.txt", tweets, false);
 	}
 	
@@ -26,7 +26,6 @@ public class TweetRetrieval {
 		try {
 			String line = "";
 			BufferedReader br = new BufferedReader(new FileReader(filename));
-	
 			while ((line = br.readLine()) != null && line.length()!=0) {
 				tweets.put(line, 0);
 			}
